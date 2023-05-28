@@ -1,25 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
+import { useGetAccountsList, useGetAccountTypes } from 'src/api/hooks'
+
+import './App.css'
 
 function App() {
+  const { accounts, isAccountsLoading } = useGetAccountsList()
+  const { accountTypes, isAccountTypesLoading } = useGetAccountTypes()
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <table id="accounts">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Profit & Loss</th>
+            <th>Account Type</th>
+          </tr>
+        </thead>
+        {isAccountsLoading || isAccountTypesLoading ? (
+          <tbody>
+            <tr>
+              <td
+                data-testid="loader"
+                className="loader"
+              />
+              <td className="loader" />
+              <td className="loader" />
+            </tr>
+          </tbody>
+        ) : (
+          <tbody>
+            {accounts?.map((account) => (
+              <tr key={account._id}>
+                <td>{account.name}</td>
+                <td>
+                  {account.currency} {account.profitLoss}
+                </td>
+                <td>
+                  {accountTypes?.find((type) => type.id === account.accountType)?.title ??
+                    'n/a'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        )}
+      </table>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
